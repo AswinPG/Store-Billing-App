@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="StoreApp.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="{AppThemeBinding Dark=Black,
+                                      Light=White}">
+
+    <StackLayout>
+        <Frame
+            Padding="15,10,15,10"
+            BackgroundColor="{AppThemeBinding Dark=#323232,
+                                              Light=#D4D4D4}"
+            CornerRadius="0">
+            <StackLayout HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                <Label
+                    FontSize="26"
+                    HorizontalTextAlignment="Start"
+                    Text="Store Manager"
+                    VerticalOptions="Center" />
+                <StackLayout HorizontalOptions="EndAndExpand" Orientation="Horizontal">
+                    <Button Text="View/Update Stock" />
+                    <Button Text="View Sell" />
+                    <Button Text="Add Product" />
+                </StackLayout>
+            </StackLayout>
+
+        </Frame>
+        <Grid ColumnDefinitions="*,1,*">
+            <ContentView>
+                <Grid RowDefinitions="2*,*">
+                    <StackLayout>
+                        <Grid
+                            Margin="10"
+                            ColumnDefinitions="4*,*,*"
+                            RowDefinitions="Auto,Auto">
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                FontAttributes="Bold"
+                                HorizontalOptions="Start"
+                                Text="Product Name" />
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                FontAttributes="Bold"
+                                HorizontalOptions="Center"
+                                Text="Price" />
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                FontAttributes="Bold"
+                                HorizontalOptions="Center"
+                                Text="Quantity" />
+                            <Entry
+                                x:Name="ProductEntry"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Placeholder="Start Typing.." />
+                            <Entry
+                                x:Name="PriceEntry"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Keyboard="Numeric" />
+                            <Entry
+                                x:Name="QuantityEntry"
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Keyboard="Numeric" />
+
+                        </Grid>
+                        <Button Text="Add" />
+                        <Grid
+                            Padding="20,5,20,5"
+                            ColumnDefinitions="4*,*,*"
+                            RowDefinitions="Auto">
+                            <Label FontAttributes="Bold" Text="Product" />
+                            <Label
+                                Grid.Column="1"
+                                Padding="10,0,10,0"
+                                FontAttributes="Bold"
+                                Text=" Quantity" />
+                            <Label
+                                Grid.Column="2"
+                                FontAttributes="Bold"
+                                Text="Price" />
+                        </Grid>
+                        <CollectionView x:Name="MainCollectionView">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Padding="20,5,20,5" ColumnDefinitions="4*,*,*">
+                                        <Label Text="{Binding Name}" />
+                                        <Label
+                                            Grid.Column="1"
+                                            Padding="10,0,10,0"
+                                            Text="{Binding Quantity}" />
+                                        <Label Grid.Column="2" Text="{Binding Price}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+
+                    </StackLayout>
+
+                    <ContentView Grid.Row="1">
+                        <StackLayout>
+                            <BoxView BackgroundColor="{AppThemeBinding Dark=Gray, Light=Black}" HeightRequest="1" />
+                            <Label HorizontalOptions="Center" Text="Custommers" />
+                            <BoxView BackgroundColor="{AppThemeBinding Dark=Gray, Light=Black}" HeightRequest="1" />
+                            <Grid
+                                Padding="20,5,20,5"
+                                ColumnDefinitions="3*,*"
+                                RowDefinitions="Auto">
+                                <Label FontAttributes="Bold" Text="Name" />
+                                <Label
+                                    Grid.Column="1"
+                                    Padding="10,0,10,0"
+                                    FontAttributes="Bold"
+                                    Text="Number" />
+                            </Grid>
+                            <CollectionView x:Name="CustommersCollectionView">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Padding="20,5,20,5" ColumnDefinitions="3*,*">
+                                            <Label Text="{Binding Name}" />
+                                            <Label
+                                                Grid.Column="1"
+                                                Padding="10,0,10,0"
+                                                Text="{Binding Quantity}" />
+
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </StackLayout>
+                    </ContentView>
+
+                </Grid>
+
+            </ContentView>
+            <BoxView Grid.Column="1" BackgroundColor="{AppThemeBinding Dark=Gray, Light=Black}" />
+            <ContentView Grid.Column="2">
+                <StackLayout Padding="20" VerticalOptions="FillAndExpand">
+                    <Label HorizontalOptions="Center" Text="Bill Details" />
+
+                    <Entry x:Name="CustommerName" Placeholder="Custommer Name" />
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
+                        <Entry x:Name="CustommerPhone" Placeholder="Phone Number" />
+                        <Entry
+                            x:Name="DiscountEntry"
+                            Grid.Column="1"
+                            Placeholder="Discount" />
+                    </Grid>
+
+                    <Grid
+                        Margin="0,5,0,5"
+                        ColumnDefinitions="4*,*,*,100"
+                        RowDefinitions="Auto">
+                        <Label FontAttributes="Bold" Text="Product" />
+                        <Label
+                            Grid.Column="1"
+                            FontAttributes="Bold"
+                            Text=" Quantity" />
+                        <Label
+                            Grid.Column="2"
+                            FontAttributes="Bold"
+                            Text="Price" />
+                    </Grid>
+                    <CollectionView x:Name="BoughtCollectionView">
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="0,5,0,5" ColumnDefinitions="4*,*,*,100">
+                                    <Label Text="{Binding Name}" VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Padding="10,0,10,0"
+                                        Text="{Binding Quantity}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Column="2"
+                                        Text="{Binding Price}"
+                                        VerticalOptions="Center" />
+                                    <Button
+                                        Grid.Column="3"
+                                        BackgroundColor="{AppThemeBinding Dark=#323232,
+                                                                          Light=#D4D4D4}"
+                                        Clicked="Button_Clicked"
+                                        Text="Remove"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <Button Text="Create Bill" VerticalOptions="EndAndExpand" />
+                </StackLayout>
+
+            </ContentView>
+
+            <ContentView
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="3"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand">
+                <Frame
+                    Padding="0"
+                    BorderColor="{AppThemeBinding Dark=White,
+                                                  Light=Black}"
+                    CornerRadius="0"
+                    VerticalOptions="Center">
+                    <Frame.Margin>
+                        <OnPlatform x:TypeArguments="Thickness">
+                            <On Platform="UWP" Value="280" />
+                            <On Platform="Android" Value="40,0,40,0" />
+                        </OnPlatform>
+                    </Frame.Margin>
+                    <StackLayout
+                        Margin="1"
+                        Padding="20"
+                        BackgroundColor="{AppThemeBinding Dark=Black,
+                                                          Light=White}"
+                        HorizontalOptions="FillAndExpand">
+                        <Label
+                            Margin="10,10,10,30"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Center"
+                            Text="Add Product" />
+
+                        <Entry Placeholder="Product Name" />
+                        <Entry Placeholder="Quantiy" />
+                        <Entry Placeholder="Price" />
+                        <Button Text="Add" />
+                        <Button Text="Cancel" />
+                    </StackLayout>
+                </Frame>
+
+            </ContentView>
+        </Grid>
+    </StackLayout>
+
+</ContentPage>

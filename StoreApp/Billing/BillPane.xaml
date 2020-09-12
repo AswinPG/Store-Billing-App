@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView
+    x:Class="StoreApp.Billing.BillPane"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentView.Content>
+        <StackLayout Padding="20" VerticalOptions="FillAndExpand">
+            <Label HorizontalOptions="Center" Text="Bill Details" />
+
+            <Entry x:Name="CustommerName" Placeholder="Custommer Name" />
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
+                <Entry x:Name="CustommerPhone" Placeholder="Phone Number" />
+                <Entry
+                    x:Name="DiscountEntry"
+                    Grid.Column="1"
+                    Placeholder="Discount" />
+            </Grid>
+
+            <Grid
+                Margin="0,5,0,5"
+                ColumnDefinitions="4*,*,*,100"
+                RowDefinitions="Auto">
+                <Label FontAttributes="Bold" Text="Product" />
+                <Label
+                    Grid.Column="1"
+                    FontAttributes="Bold"
+                    Text=" Quantity" />
+                <Label
+                    Grid.Column="2"
+                    FontAttributes="Bold"
+                    Text="Price" />
+            </Grid>
+            <CollectionView x:Name="BoughtCollectionView">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="0,5,0,5" ColumnDefinitions="4*,*,*,100">
+                            <Label Text="{Binding Name}" VerticalOptions="Center" />
+                            <Label
+                                Grid.Column="1"
+                                Padding="10,0,10,0"
+                                Text="{Binding Quantity}"
+                                VerticalOptions="Center" />
+                            <Label
+                                Grid.Column="2"
+                                Text="{Binding Price}"
+                                VerticalOptions="Center" />
+                            <Button
+                                Grid.Column="3"
+                                BackgroundColor="{AppThemeBinding Dark=#323232,
+                                                                  Light=#D4D4D4}"
+                                Clicked="Button_Clicked"
+                                Text="Remove"
+                                VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button Text="Create Bill" VerticalOptions="EndAndExpand" />
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

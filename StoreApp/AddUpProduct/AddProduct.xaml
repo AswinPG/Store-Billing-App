@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="StoreApp.AddUpProduct.AddProduct"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Frame
+        Padding="0"
+        BorderColor="{AppThemeBinding Dark=White,
+                                      Light=Black}"
+        CornerRadius="0"
+        VerticalOptions="Center">
+        <Frame.Margin>
+            <OnPlatform x:TypeArguments="Thickness">
+                <On Platform="UWP" Value="280" />
+                <On Platform="Android" Value="40,0,40,0" />
+            </OnPlatform>
+        </Frame.Margin>
+        <StackLayout
+            Margin="1"
+            Padding="20"
+            BackgroundColor="{AppThemeBinding Dark=Black,
+                                              Light=White}"
+            HorizontalOptions="FillAndExpand">
+            <Label
+                Margin="10,10,10,30"
+                FontAttributes="Bold"
+                HorizontalOptions="Center"
+                Text="Add Product" />
+
+            <Entry Placeholder="Product Name" />
+            <Entry Placeholder="Quantiy" />
+            <Entry Placeholder="Price" />
+            <Button Text="Add" />
+            <Button Text="Cancel" />
+        </StackLayout>
+    </Frame>
+</ContentView>
