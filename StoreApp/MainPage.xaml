@@ -21,7 +21,7 @@
                 <StackLayout HorizontalOptions="EndAndExpand" Orientation="Horizontal">
                     <Button Text="View/Update Stock" />
                     <Button Text="View Sell" />
-                    <Button Text="Add Product" />
+                    <Button Clicked="AddCancelClicked" Text="Add Product" />
                 </StackLayout>
             </StackLayout>
 
@@ -56,7 +56,8 @@
                                 x:Name="ProductEntry"
                                 Grid.Row="1"
                                 Grid.Column="0"
-                                Placeholder="Start Typing.." />
+                                Placeholder="Start Typing.."
+                                TextChanged="ProductEntry_TextChanged" />
                             <Entry
                                 x:Name="PriceEntry"
                                 Grid.Row="1"
@@ -69,7 +70,10 @@
                                 Keyboard="Numeric" />
 
                         </Grid>
-                        <Button Text="Add" />
+                        <Button
+                            x:Name="AddToBill"
+                            Clicked="AddToBill_Clicked"
+                            Text="Add" />
                         <Grid
                             Padding="20,5,20,5"
                             ColumnDefinitions="4*,*,*"
@@ -85,16 +89,28 @@
                                 FontAttributes="Bold"
                                 Text="Price" />
                         </Grid>
-                        <CollectionView x:Name="MainCollectionView">
+                        <CollectionView
+                            x:Name="MainCollectionView"
+                            SelectionChanged="MainCollectionView_SelectionChanged"
+                            SelectionMode="Single">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Padding="20,5,20,5" ColumnDefinitions="4*,*,*">
-                                        <Label Text="{Binding Name}" />
+                                    <Grid Padding="20,0,20,0" ColumnDefinitions="4*,*,*">
+                                        <BoxView
+                                            Grid.ColumnSpan="4"
+                                            Margin="-5,2,-5,2"
+                                            BackgroundColor="{AppThemeBinding Dark=#272727,
+                                                                              Light=#EFEFEF}" />
+                                        <Label Text="{Binding Name}" VerticalOptions="Center" />
                                         <Label
                                             Grid.Column="1"
                                             Padding="10,0,10,0"
-                                            Text="{Binding Quantity}" />
-                                        <Label Grid.Column="2" Text="{Binding Price}" />
+                                            Text="{Binding Quantity}"
+                                            VerticalOptions="Center" />
+                                        <Label
+                                            Grid.Column="2"
+                                            Text="{Binding Price}"
+                                            VerticalOptions="Center" />
                                     </Grid>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
@@ -122,12 +138,18 @@
                             <CollectionView x:Name="CustommersCollectionView">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Padding="20,5,20,5" ColumnDefinitions="3*,*">
-                                            <Label Text="{Binding Name}" />
+                                        <Grid Padding="20,0,20,0" ColumnDefinitions="3*,*">
+                                            <BoxView
+                                                Grid.ColumnSpan="2"
+                                                Margin="-5,2,-5,2"
+                                                BackgroundColor="{AppThemeBinding Dark=#272727,
+                                                                                  Light=#EFEFEF}" />
+                                            <Label Text="{Binding Name}" VerticalOptions="Center" />
                                             <Label
                                                 Grid.Column="1"
                                                 Padding="10,0,10,0"
-                                                Text="{Binding Quantity}" />
+                                                Text="{Binding Price}"
+                                                VerticalOptions="Center" />
 
                                         </Grid>
                                     </DataTemplate>
@@ -154,7 +176,7 @@
                     </Grid>
 
                     <Grid
-                        Margin="0,5,0,5"
+                        Margin="10,5,10,5"
                         ColumnDefinitions="4*,*,*,100"
                         RowDefinitions="Auto">
                         <Label FontAttributes="Bold" Text="Product" />
@@ -171,7 +193,12 @@
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Padding="0,5,0,5" ColumnDefinitions="4*,*,*,100">
+                                <Grid Padding="10,0,10,0" ColumnDefinitions="4*,*,*,100">
+                                    <BoxView
+                                        Grid.ColumnSpan="4"
+                                        Margin="-5,2,-5,2"
+                                        BackgroundColor="{AppThemeBinding Dark=#272727,
+                                                                          Light=#EFEFEF}" />
                                     <Label Text="{Binding Name}" VerticalOptions="Center" />
                                     <Label
                                         Grid.Column="1"
@@ -193,16 +220,44 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+                    <Grid ColumnDefinitions="4*,2*" RowDefinitions="Auto,Auto,Auto">
+                        <Label Text="Sum:" VerticalOptions="Center" />
+                        <Label
+                            x:Name="SumLabel"
+                            Grid.Column="1"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Row="1"
+                            Text="Discount:"
+                            VerticalOptions="Center" />
+                        <Label
+                            x:Name="DiscountLabel"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Text="{x:Reference DiscountEntry.Text}"
+                            VerticalOptions="Center" />
+                        <Label
+                            Grid.Row="2"
+                            Text="Total:"
+                            VerticalOptions="Center" />
+                        <Label
+                            x:Name="TotalLabel"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            VerticalOptions="Center" />
+                    </Grid>
                     <Button Text="Create Bill" VerticalOptions="EndAndExpand" />
                 </StackLayout>
 
             </ContentView>
 
             <ContentView
+                x:Name="AddProductView"
                 Grid.Row="0"
                 Grid.Column="0"
                 Grid.ColumnSpan="3"
                 HorizontalOptions="FillAndExpand"
+                IsVisible="false"
                 VerticalOptions="FillAndExpand">
                 <Frame
                     Padding="0"
@@ -212,8 +267,8 @@
                     VerticalOptions="Center">
                     <Frame.Margin>
                         <OnPlatform x:TypeArguments="Thickness">
-                            <On Platform="UWP" Value="280" />
-                            <On Platform="Android" Value="40,0,40,0" />
+                            <On Platform="UWP" Value="280,100,280,100" />
+                            <On Platform="Android" Value="40,0,40,20" />
                         </OnPlatform>
                     </Frame.Margin>
                     <StackLayout
@@ -228,11 +283,25 @@
                             HorizontalOptions="Center"
                             Text="Add Product" />
 
-                        <Entry Placeholder="Product Name" />
-                        <Entry Placeholder="Quantiy" />
-                        <Entry Placeholder="Price" />
-                        <Button Text="Add" />
-                        <Button Text="Cancel" />
+                        <Entry
+                            x:Name="NewProductNameEntry"
+                            Placeholder="Product Name"
+                            Text="" />
+                        <Entry
+                            x:Name="NewProductQuantityEntry"
+                            Keyboard="Numeric"
+                            Placeholder="Quantiy"
+                            Text="" />
+                        <Entry
+                            x:Name="NewProductPriceEntry"
+                            Keyboard="Numeric"
+                            Placeholder="Price"
+                            Text="" />
+                        <Button Clicked="AddClicked" Text="Add" />
+                        <Button
+                            Margin="0,0,0,20"
+                            Clicked="AddCancelClicked"
+                            Text="Cancel" />
                     </StackLayout>
                 </Frame>
 
