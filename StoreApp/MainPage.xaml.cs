@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using StoreApp.Api;
 using StoreApp.Models;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -28,62 +30,10 @@ namespace StoreApp
         public MainPage()
         {
             InitializeComponent();
+            
             products = new ObservableCollection<Product>()
             {
-                //new Product()
-                //{
-                //    Name = "Test",
-                //    Price = 199.9,
-                //    Quantity = 10,
-                //    SNo = 1
-                //},
-                //new Product()
-                //{
-                //    Name = "Test1",
-                //    Price = 199.9,
-                //    Quantity = 10,
-                //    SNo = 1
-                //},
-                //new Product()
-                //{
-                //    Name = "Test2",
-                //    Price = 199.9,
-                //    Quantity = 10,
-                //    SNo = 1
-                //},
-                //new Product()
-                //{
-                //    Name = "Test3",
-                //    Price = 199.9,
-                //    Quantity = 10,
-                //    SNo = 1
-                //},
-                //new Product()
-                //{
-                //    Name = "Test5",
-                //    Price = 199.9,
-                //    Quantity = 10,
-                //    SNo = 1
-                //},
-                //new Product()
-                //{
-                //    Name = "Test4",
-                //    Price = 199.9,
-                //    Quantity = 10,
-                //    SNo = 1
-                //}
             };
-
-            //for(int i = 0; i < 3000; i++)
-            //{
-            //    products.Add(new Product()
-            //    {
-            //        Name = "Test4" + i,
-            //        Price = 199.9,
-            //        Quantity = 10,
-            //        SNo = 1
-            //    });
-            //}
 
             Custommers = new ObservableCollection<Custommer>() { };
             SaleData = new ObservableCollection<SingleSale>() { };
@@ -110,11 +60,13 @@ namespace StoreApp
                 products = JsonConvert.DeserializeObject<ObservableCollection<Product>>(items);
                 string sales = App.Current.Properties["Sales"].ToString();
                 SaleData = JsonConvert.DeserializeObject<ObservableCollection<SingleSale>>(sales);
+                SaleCollectionView.ItemsSource = SaleData;
                 UpdateSearchData();
                 UpdateCustommerData();
             }
             catch (Exception f)
             {
+                SaleCollectionView.ItemsSource = SaleData;
                 DisplayAlert("Error", f.Message, "Ok");
             }
 
@@ -131,6 +83,8 @@ namespace StoreApp
                 SearchItems.Add(products[i]);
             }
         }
+
+       
         public void UpdateCustommerData()
         {
             SearchCustommers.Clear();
@@ -142,19 +96,27 @@ namespace StoreApp
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            Button but = sender as Button;
-            Product Rem = but.BindingContext as Product;
-            Product Old = products.Where(x => x.Name == Rem.Name).FirstOrDefault();
-            BillItems.Remove(Rem);
-            products.Remove(Old);
-            products.Insert(0, new Product()
+            if (SalesView.IsVisible)
             {
-                Name = Old.Name,
-                Quantity = Old.Quantity + Rem.Quantity,
-                Price = Old.Price
-            });
-            UpdateSearchData();
-            UpdateTotal();
+
+            }
+            else
+            {
+                Button but = sender as Button;
+                Product Rem = but.BindingContext as Product;
+                Product Old = products.Where(x => x.Name == Rem.Name).FirstOrDefault();
+                BillItems.Remove(Rem);
+                products.Remove(Old);
+                products.Insert(0, new Product()
+                {
+                    Name = Old.Name,
+                    Quantity = Old.Quantity + Rem.Quantity,
+                    Price = Old.Price
+                });
+                UpdateSearchData();
+                UpdateTotal();
+            }
+            
         }
 
         private void AddCancelClicked(object sender, EventArgs e)
@@ -341,12 +303,17 @@ namespace StoreApp
                     SelectedCustommer = custommer;
                     bool cont = false;
 
-                    if (SearchCustommers.Count == 1)
+                    if (SearchCustommers.Count > 0)
                     {
-                        if (SearchCustommers[0].Name == custommer.Name && SearchCustommers[0].PhoneNo == custommer.PhoneNo)
+                        for(int i = 0; i < SearchCustommers.Count; i++)
                         {
-                            cont = true;
+                            if (SearchCustommers[i].Name == custommer.Name && SearchCustommers[i].PhoneNo == custommer.PhoneNo)
+                            {
+                                cont = true;
+                                break;
+                            }
                         }
+                        
                     }
 
                     if (!cont)
@@ -365,15 +332,22 @@ namespace StoreApp
                         }
                     }
                 }
+                ObservableCollection<Product> items = new ObservableCollection<Product>() { };
+                for(int i = 0; i < BillItems.Count; i++)
+                {
+                    items.Add(BillItems[i]);
+                }
+
                 SingleSale sale = new SingleSale()
                 {
                     Customer = SelectedCustommer,
-                    ItesmsSold = BillItems,
+                    ItesmsSold = items,
                     date = DateTime.Now,
                     Discount = DiscountEntry.Text,
                     TotalAmount = Total
                 };
-                SaleData.Add(sale);
+                SaleData.Insert(0,sale);
+                CreateBillfile(sale);
                 string salesdata = JsonConvert.SerializeObject(SaleData);
                 App.Current.Properties["Sales"] = salesdata;
                 try
@@ -408,6 +382,97 @@ namespace StoreApp
         }
 
 
+        public void CreateBillfile(SingleSale sale)
+        {
+            try
+            {
+                string Date = RemoveSymbols(sale.date.ToString());
+                string filename = sale.Customer.Name + Date + ".html";
+                string FilePath2 = Path.Combine(FileSystem.AppDataDirectory, filename);
+                using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(FilePath2))
+                {
+                    
+                    file.WriteLine("<!DOCTYPE html>");
+                    file.WriteLine("<html>");
+                    file.WriteLine("<meta charset=\"utf - 8\">");
+                    file.WriteLine("<head>");
+                    file.WriteLine("<style>");
+                    file.WriteLine("td, th {border: 1px solid #dddddd;text-align: left; padding: 8px;}");
+                    file.WriteLine("table {border-collapse: collapse; width: 100%;}");
+                    file.WriteLine("</style>");
+
+                    file.WriteLine("</head>");
+                    file.WriteLine("<body>");
+                    file.WriteLine("<h1 style=\"text-align:center\">Aim Electricals</h1>");
+                    file.WriteLine("<h2 style=\"text-align:center\">9847663932</h2>");
+                    file.WriteLine("<br><br><br>");
+                    file.WriteLine("<table>");
+                    file.WriteLine("<tr>");
+                    file.WriteLine("<td colspan=40%><b>Product</b></td> ");
+                    file.WriteLine("<td colspan=30%><b>Quantity<b></td> ");
+                    file.WriteLine("<td colspan=30%><b>Price</b></td> ");
+                    file.WriteLine("</tr>");
+                    for (int i = 0; i < sale.ItesmsSold.Count; i++)
+                    {
+                        file.WriteLine("<tr>");
+                        file.WriteLine("<td colspan=40%>" + sale.ItesmsSold[i].Name + "</td> ");
+                        file.WriteLine("<td colspan=30%>" + sale.ItesmsSold[i].Quantity + "</td> ");
+                        file.WriteLine("<td colspan=30%>" + "₹ " + sale.ItesmsSold[i].Price + "/-" + "</td> ");
+                        file.WriteLine("</tr>");
+                    }
+                    file.WriteLine("<tr>");
+                    file.WriteLine("</tr>");
+                    file.WriteLine("<tr>");
+                    file.WriteLine("</tr>");
+                    file.WriteLine("<tr>");
+                    file.WriteLine("</tr>");
+                    file.WriteLine("</table>");
+
+                    file.WriteLine("<br><br>");
+
+                    file.WriteLine("<table>");
+                    file.WriteLine("<tr>");
+                    file.WriteLine("<td text-align: right colspan=40%>" + "<b>Sum:</b>" + "</td> ");
+                    
+                    var sum = sale.TotalAmount + sale.Discount;
+                    file.WriteLine("<td colspan=30%> <b>" + "₹ "+ sum +"/-" + "</b> </td> ");
+                    file.WriteLine("</tr>");
+                    file.WriteLine("<tr>");
+                    file.WriteLine("<td colspan=40%>" + "<b>Discount:</b>" + "</td> ");
+                   
+                    file.WriteLine("<td text-align: right colspan=30%><b>" + "₹ " + sale.Discount + "/-" + "</b> </td> ");
+                    file.WriteLine("</tr>");
+                    file.WriteLine("<tr>");
+                    file.WriteLine("<td colspan=40%><b>" + "Total:" + "</b></td> ");
+                    
+                    file.WriteLine("<td text-align:right colspan=30%><b>" + "₹ " + sale.TotalAmount + "/-" + "</b></td> ");
+                    file.WriteLine("</tr>");
+
+                    file.WriteLine("</table>");
+
+                    file.WriteLine("<p text-align:center>Thanks for shopping at Aim Electricals. We hope to have the pleasure of doing business with you in the future.</p>");
+
+
+                    file.WriteLine("</body >");
+                  
+   
+                }
+            }
+            catch(Exception y)
+            {
+
+            }
+        }
+
+        public string RemoveSymbols(string date)
+        {
+            date = date.Replace("/", "_");
+            date = date.Replace(":", "_");
+            date = date.Replace(" ", "_");
+            return date;
+        }
+
         public void Reset()
         {
             SelectedCustommer = null;
@@ -428,6 +493,10 @@ namespace StoreApp
                     SearchCustommers.Add(Custommers[i]);
                 }
             }
+            if(SearchCustommers.Count == 0)
+            {
+                SelectedCustommer = null;
+            }
         }
 
         private void CustommerPhoneEntry_TextChanged(object sender, TextChangedEventArgs e)
@@ -439,6 +508,10 @@ namespace StoreApp
                 {
                     SearchCustommers.Add(Custommers[i]);
                 }
+            }
+            if (SearchCustommers.Count == 0)
+            {
+                SelectedCustommer = null;
             }
         }
 
@@ -501,6 +574,127 @@ namespace StoreApp
         private void GoBack_Clicked(object sender, EventArgs e)
         {
             UpdateView.IsVisible = false;
+            SalesView.IsVisible = false;
+            CreateBillButton.IsEnabled = true;
+            CreateBillButton.Opacity = 1;
+            BillItems.Clear();
+        }
+
+        private void SaleCollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SingleSale saledata = e.CurrentSelection[0] as SingleSale;
+            BillItems.Clear();
+            for(int i = 0; i < saledata.ItesmsSold.Count; i++)
+            {
+                BillItems.Add(saledata.ItesmsSold[i]);
+            }
+            CustommerNameEntry.Text = saledata.Customer.Name;
+            CustommerPhoneEntry.Text = saledata.Customer.PhoneNo;
+            DiscountEntry.Text = saledata.Discount;
+        }
+
+        private void ViewSaleButton_Clicked(object sender, EventArgs e)
+        {
+            SalesView.IsVisible = true;
+            CreateBillButton.IsEnabled = false;
+            CreateBillButton.Opacity = 0;
+            
+        }
+
+        private async void SyncButton_Clicked(object sender, EventArgs e)
+        {
+            UploadData Data = new UploadData()
+            {
+                Products = this.products,
+                Custommers = this.Custommers,
+                Sales = this.SaleData,
+                Datetime = DateTime.Now
+            };
+            if(await DisplayAlert("Confirmation","This will replace the online data with the current data stiored in the system. Are you sure ? ", "Yes", "No"))
+            {
+                try
+                {
+                    var responseMessage = await ApiHelper.APIClient.PostAsJsonAsync("https://us-central1-tuto-ff870.cloudfunctions.net/UploadProduct", Data);
+                    await DisplayAlert("Success", "Data uploaded. ", "Ok");
+                }
+                catch(Exception r)
+                {
+                    await DisplayAlert("Error", "Data not uploaded. Try again.", "Ok");
+                }
+                
+            }
+            
+        }
+
+
+        private async void Download_Button_Clicked(object sender, EventArgs e)
+        {
+            
+            
+            try
+            {
+                var responseMessage = await ApiHelper.APIClient.PostAsJsonAsync("https://us-central1-tuto-ff870.cloudfunctions.net/UploadDownload", new {y="" });
+                UploadData Data = await responseMessage.Content.ReadAsAsync<UploadData>();
+                if(await DisplayAlert("Confirmation", "This will replace the system data with the online data stiored in the cloud\n Date:"+Data.Datetime + ". Are you sure ? ", "Yes", "No"))
+                {
+
+                    this.products = Data.Products;
+                    this.Custommers = Data.Custommers;
+                    SaleData.Clear();
+                    for(int i = 0; i < Data.Sales.Count; i++)
+                    {
+                        SaleData.Add(Data.Sales[i]);
+                    }
+                    string data = JsonConvert.SerializeObject(products);
+                    App.Current.Properties["Products"] = data;
+                    try
+                    {
+                        string FilePath = Path.Combine(FileSystem.AppDataDirectory, "ProductsData.json");
+                        File.WriteAllText(FilePath, data);
+                    }
+                    catch (Exception h)
+                    {
+
+                    }
+
+
+                    string cdata = JsonConvert.SerializeObject(Custommers);
+                    App.Current.Properties["Custommers"] = cdata;
+                    try
+                    {
+                        string FilePath = Path.Combine(FileSystem.AppDataDirectory, "Custommers.json");
+                        File.WriteAllText(FilePath, cdata);
+                    }
+                    catch (Exception n)
+                    {
+
+                    }
+                    string salesdata = JsonConvert.SerializeObject(SaleData);
+                    App.Current.Properties["Sales"] = salesdata;
+                    try
+                    {
+                        string FilePath2 = Path.Combine(FileSystem.AppDataDirectory, "Sales.json");
+                        File.WriteAllText(FilePath2, salesdata);
+                    }
+                    catch(Exception f)
+                    {
+
+                    }
+                    UpdateCustommerData();
+                    UpdateSearchData();
+                    
+                    await DisplayAlert("Success", "Data Downloaded", "Ok");
+                }
+                
+                
+            }
+            catch (Exception r)
+            {
+                await DisplayAlert("Error", "Data not Downloaded. Try again.", "Ok");
+            }
+
         }
     }
+
+    
 }

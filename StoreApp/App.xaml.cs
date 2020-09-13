@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StoreApp.Api;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -9,7 +10,7 @@ namespace StoreApp
         public App()
         {
             InitializeComponent();
-
+            ApiHelper.InitialiseClient();
             MainPage = new MainPage();
         }
 

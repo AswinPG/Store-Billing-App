@@ -21,10 +21,21 @@
                 <StackLayout HorizontalOptions="EndAndExpand" Orientation="Horizontal">
                     <Button Clicked="GoBack_Clicked" Text="Home" />
                     <Button
+                        x:Name="SyncButton"
+                        Clicked="SyncButton_Clicked"
+                        Text="Upload" />
+                    <Button
+                        x:Name="DownloadButton"
+                        Clicked="Download_Button_Clicked"
+                        Text="Download" />
+                    <Button
                         x:Name="UpdateViewButton"
                         Clicked="UpdateViewButton_Clicked"
                         Text="View/Update Stock" />
-                    <Button Text="View Sell" />
+                    <Button
+                        x:Name="ViewSaleButton"
+                        Clicked="ViewSaleButton_Clicked"
+                        Text="View Sale" />
                     <Button Clicked="AddCancelClicked" Text="Add Product" />
                 </StackLayout>
             </StackLayout>
@@ -76,8 +87,10 @@
                         </Grid>
                         <Button
                             x:Name="AddToBill"
+                            BackgroundColor="SeaGreen"
                             Clicked="AddToBill_Clicked"
-                            Text="Add" />
+                            Text="Add"
+                            TextColor="White" />
                         <Grid
                             Padding="20,5,20,5"
                             ColumnDefinitions="4*,*,*"
@@ -267,13 +280,80 @@
                     </Grid>
                     <Button
                         x:Name="CreateBillButton"
-                        BackgroundColor="{AppThemeBinding Dark=#272727,
-                                                          Light=#EFEFEF}"
+                        BackgroundColor="SeaGreen"
                         Clicked="CreateBillButton_Clicked"
                         Text="Create Bill"
+                        TextColor="White"
                         VerticalOptions="EndAndExpand" />
                 </StackLayout>
 
+            </ContentView>
+
+            <ContentView
+                x:Name="SalesView"
+                BackgroundColor="{AppThemeBinding Dark=Black,
+                                                  Light=White}"
+                HorizontalOptions="FillAndExpand"
+                IsVisible="false"
+                VerticalOptions="FillAndExpand">
+                <StackLayout>
+                    <Grid
+                        Padding="20,5,20,5"
+                        ColumnDefinitions="4*,*,*,*"
+                        RowDefinitions="Auto">
+                        <Label FontAttributes="Bold" Text="Name" />
+                        <Label
+                            Grid.Column="1"
+                            Padding="10,0,10,0"
+                            FontAttributes="Bold"
+                            Text="Discount" />
+                        <Label
+                            Grid.Column="2"
+                            FontAttributes="Bold"
+                            Text="Total" />
+                        <Label
+                            Grid.Column="3"
+                            FontAttributes="Bold"
+                            Text="Date" />
+                    </Grid>
+                    <CollectionView
+                        x:Name="SaleCollectionView"
+                        SelectionChanged="SaleCollectionView_SelectionChanged"
+                        SelectionMode="Single">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="30,5,30,5" ColumnDefinitions="4*,*,*,*">
+                                    <BoxView
+                                        Grid.ColumnSpan="4"
+                                        Margin="-5,2,-5,2"
+                                        BackgroundColor="{AppThemeBinding Dark=#272727,
+                                                                          Light=#EFEFEF}" />
+
+                                    <Label
+                                        Grid.Column="0"
+                                        Padding="10,0,10,0"
+                                        Text="{Binding Customer.Name}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Text="{Binding Discount}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        x:Name="UpdateButton"
+                                        Grid.Column="2"
+                                        Text="{Binding TotalAmount}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        x:Name="DeleteButton"
+                                        Grid.Column="3"
+                                        Text="{Binding date}"
+                                        VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    <Button Clicked="GoBack_Clicked" Text="Go Back" />
+                </StackLayout>
             </ContentView>
 
             <ContentView

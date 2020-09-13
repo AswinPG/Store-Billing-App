@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="0c4ab88c-9ac4-4799-9ad2-07053f112552"
+    Name="epochzero.BillingApp"
     Publisher="CN=aswin"
-    Version="1.0.0.0" />
+    Version="1.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="ec0cc741-fd3e-485c-81be-68815c480690" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>StoreApp.UWP</DisplayName>
-    <PublisherDisplayName>c713eede-3a4f-4ebc-bd72-bc2f4451a30f</PublisherDisplayName>
+    <DisplayName>StoreApp</DisplayName>
+    <PublisherDisplayName>Aswin</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
