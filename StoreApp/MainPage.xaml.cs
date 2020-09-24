@@ -398,27 +398,30 @@ namespace StoreApp
                     file.WriteLine("<meta charset=\"utf - 8\">");
                     file.WriteLine("<head>");
                     file.WriteLine("<style>");
-                    file.WriteLine("td, th {border: 1px solid #dddddd;text-align: left; padding: 8px;}");
+                    file.WriteLine("td, th {border: 1px solid #dddddd;text-align: left; padding: 1px;}");
                     file.WriteLine("table {border-collapse: collapse; width: 100%;}");
                     file.WriteLine("</style>");
 
                     file.WriteLine("</head>");
                     file.WriteLine("<body>");
-                    file.WriteLine("<h1 style=\"text-align:center\">Aim Electricals</h1>");
-                    file.WriteLine("<h2 style=\"text-align:center\">9847663932</h2>");
-                    file.WriteLine("<br><br><br>");
+                    file.WriteLine("<h1 style=\"text-align:center\">Estimate</h1>");
+                    file.WriteLine("<p><b>Date: " + DateTime.Now +"</b></p>");
+                    file.WriteLine("<p><b>Billed To: " + sale.Customer.Name +"</b></p>");
+                    file.WriteLine("<br><br>");
                     file.WriteLine("<table>");
                     file.WriteLine("<tr>");
-                    file.WriteLine("<td colspan=40%><b>Product</b></td> ");
-                    file.WriteLine("<td colspan=30%><b>Quantity<b></td> ");
-                    file.WriteLine("<td colspan=30%><b>Price</b></td> ");
+                    file.WriteLine("<td colspan=40%><b>Item</b></td> ");
+                    file.WriteLine("<td colspan=20%><b>Quantity<b></td> ");
+                    file.WriteLine("<td colspan=20%><b>Rate</b></td> ");
+                    file.WriteLine("<td colspan=20%><b>Net Amt</b></td> ");
                     file.WriteLine("</tr>");
                     for (int i = 0; i < sale.ItesmsSold.Count; i++)
                     {
                         file.WriteLine("<tr>");
                         file.WriteLine("<td colspan=40%>" + sale.ItesmsSold[i].Name + "</td> ");
-                        file.WriteLine("<td colspan=30%>" + sale.ItesmsSold[i].Quantity + "</td> ");
-                        file.WriteLine("<td colspan=30%>" + "₹ " + sale.ItesmsSold[i].Price + "/-" + "</td> ");
+                        file.WriteLine("<td colspan=20%>" + sale.ItesmsSold[i].Quantity + "</td> ");
+                        file.WriteLine("<td colspan=20%>" + "₹ " + sale.ItesmsSold[i].Price + "/-" + "</td> ");
+                        file.WriteLine("<td colspan=20%>" + "₹ " + sale.ItesmsSold[i].Price * sale.ItesmsSold[i].Quantity + "/-" + "</td> ");
                         file.WriteLine("</tr>");
                     }
                     file.WriteLine("<tr>");
@@ -435,7 +438,7 @@ namespace StoreApp
                     file.WriteLine("<tr>");
                     file.WriteLine("<td text-align: right colspan=40%>" + "<b>Sum:</b>" + "</td> ");
                     
-                    var sum = sale.TotalAmount + sale.Discount;
+                    double sum = sale.TotalAmount + Convert.ToDouble(sale.Discount);
                     file.WriteLine("<td colspan=30%> <b>" + "₹ "+ sum +"/-" + "</b> </td> ");
                     file.WriteLine("</tr>");
                     file.WriteLine("<tr>");
@@ -444,14 +447,14 @@ namespace StoreApp
                     file.WriteLine("<td text-align: right colspan=30%><b>" + "₹ " + sale.Discount + "/-" + "</b> </td> ");
                     file.WriteLine("</tr>");
                     file.WriteLine("<tr>");
-                    file.WriteLine("<td colspan=40%><b>" + "Total:" + "</b></td> ");
+                    file.WriteLine("<td colspan=40%><b>" + "Grand Total:" + "</b></td> ");
                     
                     file.WriteLine("<td text-align:right colspan=30%><b>" + "₹ " + sale.TotalAmount + "/-" + "</b></td> ");
                     file.WriteLine("</tr>");
 
                     file.WriteLine("</table>");
 
-                    file.WriteLine("<p text-align:center>Thanks for shopping at Aim Electricals. We hope to have the pleasure of doing business with you in the future.</p>");
+                    file.WriteLine("<p text-align:center>Thanks for shopping with us. We hope to have the pleasure of doing business with you in the future.</p>");
 
 
                     file.WriteLine("</body >");
